@@ -29,7 +29,6 @@ export const fetchUserData = async () => {
     const currentUser = getCurrentUser();
 
     if (currentUser) {
-        console.log(currentUser.uid);
         return await usersRef
             .doc(currentUser.uid)
             .get()

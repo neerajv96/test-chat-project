@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import PublicRoute from './PublicRoute';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { Spin } from 'antd';
 import Login from '../components/login';
@@ -13,17 +12,18 @@ export default function PageRoutes() {
     const [user, setUser] = useState(null as any);
     const [authState, setAuthState] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigation = useNavigate();
 
     useEffect(() => {
         setLoading(true);
         auth.onAuthStateChanged((user) => {
             if (user) {
-                console.log('user:', user);
                 fetchUserData().then((res: unknown) => {
                     if (res) {
                         setUser(res);
                         setAuthState(true);
                         setLoading(false);
+                        navigation('/channel');
                     }
                 });
             } else {

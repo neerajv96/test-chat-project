@@ -16,6 +16,7 @@ const Login = () => {
         setGoogleLoading(true);
         auth.signInWithPopup(provider)
             .then(async (cred) => {
+                console.log('cred.user:', cred.user);
                 if (cred.user) {
                     console.log('cred.user:', cred.user);
                     const { uid, email, displayName, photoURL } = cred.user;
@@ -33,7 +34,7 @@ const Login = () => {
                                 contacts: [],
                             })
                             .then(() => {
-                                navigate('/');
+                                navigate('/channel');
                             });
                     } else {
                         navigate('/channel');
