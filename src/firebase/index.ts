@@ -5,12 +5,12 @@ import 'firebase/compat/storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: 'AIzaSyB-oH7um2kpuKS9MYAoF1j5g7-0jBWqTPw',
-    authDomain: 'chat-test-project-228dd.firebaseapp.com',
-    projectId: 'chat-test-project-228dd',
-    storageBucket: 'chat-test-project-228dd.appspot.com',
-    messagingSenderId: '748735832284',
-    appId: '1:748735832284:web:eaa254d0092f27a6bc5419',
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
 };
 
 // Initialize Firebase

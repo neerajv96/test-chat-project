@@ -7,9 +7,11 @@ import { fetchUserData } from '../firebase/users';
 import PrivateRoute from './PrivateRoute';
 import Channel from '../components/channel/channel';
 import Reply from '../components/channel/reply';
+import Post from '../components/channel/post';
 
 export default function PageRoutes() {
     const [user, setUser] = useState(null as any);
+    const [domain, setDomain] = useState('');
     const [authState, setAuthState] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
@@ -18,9 +20,12 @@ export default function PageRoutes() {
         setLoading(true);
         auth.onAuthStateChanged((user) => {
             if (user) {
-                fetchUserData().then((res: unknown) => {
+                fetchUserData().then((res: any) => {
                     if (res) {
                         setUser(res);
+                        localStorage.setItem('user', JSON.stringify(res));
+                        const domain = res.email.split('@')[1].split('.')[0];
+                        setDomain(domain);
                         setAuthState(true);
                         setLoading(false);
                         navigation('/channel');
@@ -56,10 +61,18 @@ export default function PageRoutes() {
                         }
                     />
                     <Route
+                        path="/channel/:id"
+                        element={
+                            <PrivateRoute authState={authState}>
+                                <Post />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
                         path="/channel"
                         element={
                             <PrivateRoute authState={authState}>
-                                <Channel user={user} />
+                                <Channel user={user} domain={domain} />
                             </PrivateRoute>
                         }
                     />

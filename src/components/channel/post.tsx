@@ -1,58 +1,54 @@
 import { Button, Card, Form, Input, List } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { firestore } from '../../firebase';
+import { createPost } from '../../firebase/posts';
 
 const { TextArea } = Input;
-interface IUser {
-    id: number;
-    name: string;
-}
-
-interface IReply {
-    id: number;
-    reply: string;
-    user: IUser;
-}
-
-interface IPost {
-    id: number;
-    message: string;
-    user: IUser;
-    replies: IReply[];
-}
 
 export default function Post() {
     const [form] = Form.useForm();
     const navigate = useNavigate();
+    const { id } = useParams();
 
-    const posts: IPost[] = [
-        {
-            id: 321,
-            message: 'Message',
-            user: { id: 443, name: 'sam' },
-            replies: [
-                {
-                    id: 9383,
-                    reply: 'reply message',
-                    user: { id: 443, name: 'Alpha' },
-                },
-            ],
-        },
-    ];
-
-    const fetchPostsForChannel = () => {
-        //todo fetch posts by channel id
+    const [post, setPosts] = useState<any[]>([]);
+    const postToChannel = (values: any) => {
+        const user: any = localStorage.getItem('user');
+        const userData = JSON.parse(user);
+        createPost({
+            subject: values.subject,
+            body: values.body,
+            channelId: id,
+            userId: userData.uid,
+            userName: userData.displayName,
+        });
+        form.resetFields();
     };
-
-    const postToChannel = (postId: number) => {
-        navigate(`/posts/${postId}`);
+    useEffect(() => {
+        firestore
+            .collection('posts')
+            .where('channelId', '==', id)
+            .onSnapshot(({ docs }) => {
+                setPosts(
+                    docs.map((doc) => {
+                        return { id: doc.id, ...doc.data() };
+                    })
+                );
+            });
+    }, [id]);
+    const handlePostClick = (id: string) => {
+        navigate(`/posts/${id}`);
     };
     return (
         <>
             <List
-                dataSource={posts}
+                dataSource={post}
                 renderItem={(item) => (
-                    <List.Item onClick={() => postToChannel(item.id)}>
-                        {item.message}
+                    <List.Item
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => handlePostClick(item.id)}
+                    >
+                        {item.subject}
                     </List.Item>
                 )}
             />

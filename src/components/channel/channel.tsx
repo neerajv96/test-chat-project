@@ -1,33 +1,53 @@
 import { Button, Form, Input, List } from 'antd';
-import Layout, { Content, Header } from 'antd/lib/layout/layout';
+import Layout, { Header } from 'antd/lib/layout/layout';
 import Sider from 'antd/lib/layout/Sider';
-import Post from './post';
-
-interface IChannel {
-    id: number;
-    name: string;
-}
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { firestore } from '../../firebase';
+import { createChannel } from '../../firebase/channels';
 interface IUser {
-    id: number;
+    uid: string;
     name: string;
+    email: string;
 }
 
 interface ChannelProps {
     user: IUser;
+    domain: string;
 }
 
-const Channel = ({ user }: ChannelProps) => {
-    console.log('user:', user);
+const Channel = ({ user, domain }: ChannelProps) => {
     const [form] = Form.useForm();
-    const channels: IChannel[] = [{ id: 123, name: 'My Channel' }];
+    const [channels, setChannels] = useState<any[]>([]);
+    const navigate = useNavigate();
 
-    const createNewChannel = (values: unknown) => {
-        console.log('values:', values);
+    const createNewChannel = (values: { channelName: string }) => {
+        form.resetFields();
+        createChannel({
+            name: values.channelName,
+            domain,
+            createdBy: user.uid,
+        });
+    };
+    useEffect(() => {
+        firestore
+            .collection('channels')
+            .where('domain', '==', domain)
+            .onSnapshot(({ docs }) => {
+                setChannels(
+                    docs.map((doc) => {
+                        return { id: doc.id, ...doc.data() };
+                    })
+                );
+            });
+    }, [domain]);
+
+    const handleChannelClick = (id: string) => {
+        navigate(`/channel/${id}`);
     };
 
     return (
         <Layout>
-            <Header>My Channel</Header>
             <Layout>
                 <Sider>
                     <div>
@@ -45,18 +65,20 @@ const Channel = ({ user }: ChannelProps) => {
                                 </Button>
                             </Form.Item>
                         </Form>
-
+                        <Header>My Channels</Header>
                         <List
                             dataSource={channels}
                             renderItem={(item) => (
-                                <List.Item>{item.name}</List.Item>
+                                <List.Item
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => handleChannelClick(item.id)}
+                                >
+                                    {item.name}
+                                </List.Item>
                             )}
                         />
                     </div>
                 </Sider>
-                <Content>
-                    <Post />
-                </Content>
             </Layout>
         </Layout>
     );

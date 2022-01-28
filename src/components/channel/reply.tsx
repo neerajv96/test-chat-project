@@ -1,61 +1,47 @@
 import { Button, Card, Form, Input, List } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { firestore } from '../../firebase';
+import { addReply } from '../../firebase/posts';
 
 const { TextArea } = Input;
 
-interface IUser {
-    id: number;
-    name: string;
-}
-
-interface IReply {
-    id: number;
-    reply: string;
-    user: IUser;
-}
-
-interface IPost {
-    id: number;
-    message: string;
-    user: IUser;
-    replies: IReply[];
-}
-
 export default function Reply() {
     const [form] = Form.useForm();
-    const post: IPost = {
-        id: 321,
-        message: 'Message',
-        user: { id: 443, name: 'sam' },
-        replies: [
-            {
-                id: 9383,
-                reply: 'reply message',
-                user: { id: 443, name: 'Alpha' },
-            },
-            {
-                id: 9384,
-                reply: 'reply message1',
-                user: { id: 443, name: 'Beta' },
-            },
-            {
-                id: 9385,
-                reply: 'reply message2',
-                user: { id: 443, name: 'Gamma' },
-            },
-        ],
-    };
-    const replyToPost = (values: unknown) => {
-        console.log(values);
-    };
+    const { id } = useParams();
+    const [post, setPost] = useState<any>();
 
+    const replyToPost = (values: { reply: string }) => {
+        form.resetFields();
+        const user: any = localStorage.getItem('user');
+        const userData = JSON.parse(user);
+        addReply({
+            postId: id,
+            message: values.reply,
+            userId: userData.uid,
+            userName: userData.displayName,
+        });
+    };
+    useEffect(() => {
+        firestore
+            .collection('posts')
+            .doc(id)
+            .onSnapshot((response) => {
+                setPost(response.data());
+            });
+    }, [id]);
     return (
         <>
+            <b>Posted by</b>: {post?.userName}
+            <br />
+            <b>Subject</b>: {post?.subject}
+            <br />
+            <b>Body</b>: {post?.body}
             <List
-                dataSource={post.replies}
-                renderItem={(item) => (
+                dataSource={post?.replies}
+                renderItem={(item: any) => (
                     <List.Item>
-                        <span>{item.user.name}</span>: {item.reply}
+                        <b>{item.userName}</b>: {item.message}
                     </List.Item>
                 )}
             />
