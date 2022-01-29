@@ -6,6 +6,8 @@ node version 14+ should be used.
 
 UPDATE .env.json with firebase config to get it working
 
+DEMO is available at https://chat-test-project-228dd.web.app/
+
 ## Available Scripts
 
 In the project directory, you can run:
