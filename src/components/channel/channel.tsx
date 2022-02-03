@@ -48,38 +48,36 @@ const Channel = ({ user, domain }: ChannelProps) => {
 
     return (
         <Layout>
-            <Layout>
-                <Sider>
-                    <div>
-                        <Form form={form} onFinish={createNewChannel}>
-                            <Form.Item
-                                name="channelName"
-                                label="Create New Channel"
-                                rules={[{ required: true }]}
+            <Sider>
+                <div>
+                    <Form form={form} onFinish={createNewChannel}>
+                        <Form.Item
+                            name="channelName"
+                            label="Create New Channel"
+                            rules={[{ required: true }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                            <Button type="primary" htmlType="submit">
+                                New Channel
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                    <Header>My Channels</Header>
+                    <List
+                        dataSource={channels}
+                        renderItem={(item) => (
+                            <List.Item
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleChannelClick(item.id)}
                             >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                                <Button type="primary" htmlType="submit">
-                                    New Channel
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                        <Header>My Channels</Header>
-                        <List
-                            dataSource={channels}
-                            renderItem={(item) => (
-                                <List.Item
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() => handleChannelClick(item.id)}
-                                >
-                                    {item.name}
-                                </List.Item>
-                            )}
-                        />
-                    </div>
-                </Sider>
-            </Layout>
+                                {item.name}
+                            </List.Item>
+                        )}
+                    />
+                </div>
+            </Sider>
         </Layout>
     );
 };
