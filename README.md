@@ -8,6 +8,8 @@ UPDATE .env.json with firebase config to get it working
 
 DEMO is available at https://chat-test-project-228dd.web.app/
 
+Code walk through video: https://drive.google.com/drive/folders/1yUBx9SiOGJ4QiLghoGNvMuzvj1g7o63Q
+
 Video: https://www.loom.com/share/b019063d86f5475fb5ac9c9578d7d5bb
 
 ## Available Scripts
